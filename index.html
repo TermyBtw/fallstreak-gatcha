@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Spin Fallstreaks</title>
-    <style>
+    <title>Fallstreak Gatcha</title>
+       <style>
         @font-face {
             font-family: 'Pusab';
             src: url('Pusab.otf');
@@ -11,7 +11,7 @@
 
         body {
             background-color: #000926;
-            color: #0086C9;
+            color: #ffffff;
             font-family: 'Pusab', Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -31,15 +31,15 @@
         .pack-img {
             width: 280px;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .pack-img:hover {
-            transform: scale(1.06);
+            transform: scale(1.08) rotate(2deg);
         }
 
         .pack-img:active {
-            transform: scale(0.96);
+            transform: scale(0.95) rotate(-1deg);
         }
 
         .info-text {
@@ -47,7 +47,12 @@
             margin-top: 10px;
             -webkit-text-stroke: 1px rgba(0, 0, 0, 0.5);
         }
-                .cards-area {
+
+        .hidden {
+            display: none !important;
+        }
+
+        .cards-area {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -65,12 +70,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: cardPop 0.35s ease-out;
+            transition: transform 0.5s ease, background-color 0.3s ease;
         }
 
-        @keyframes cardPop {
-            0% { transform: scale(0.3); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .card.covered {
+            background-color: #0284c7;
+            border-color: #7dd3fc;
+            transform: rotateY(180deg);
+        }
+
+        .card.covered * {
+            visibility: hidden;
         }
 
         .card img {
@@ -85,20 +95,6 @@
         .card-odds { font-size: 0.75rem; color: #94a3b8; }
         .card-name { font-size: 1.1rem; margin: 5px 0; }
         .card-desc { font-size: 0.75rem; font-family: Arial, sans-serif; color: #cbd5e1; }
-        .hidden {
-    display: none;
-}
-
-.card.covered {
-    background-color: #0284c7;
-    border-color: #7dd3fc;
-    cursor: pointer;
-}
-
-.card.covered * {
-    visibility: hidden;
-}
-
     </style>
 </head>
 <body>
