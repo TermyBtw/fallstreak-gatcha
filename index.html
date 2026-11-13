@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fallstreak Gatcha</title>
-       <style>
+    <style>
         @font-face {
             font-family: 'Pusab';
             src: url('Pusab.otf');
@@ -17,6 +17,11 @@
             text-align: center;
             margin: 0;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 95vh;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -58,34 +63,11 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
-        .card {
-            background-color: #0a1945;
-            width: 170px;
-            padding: 12px;
-            border-radius: 12px;
-            border: 3px solid #38bdf8;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.5s ease, background-color 0.3s ease;
-        }
-
-        .card.covered {
-            background-color: #0284c7;
-            border-color: #7dd3fc;
-            transform: rotateY(180deg);
-        }
-
-        .card.covered * {
-            visibility: hidden;
-        }
-
-               .card-img {
-            width: 190px;
+        .card-img {
+            width: 240px;
             border-radius: 12px;
             transition: transform 0.2s ease-in-out;
         }
@@ -94,11 +76,17 @@
             transform: rotateY(90deg);
         }
 
-
-        .card-rarity { font-size: 0.85rem; color: #38bdf8; }
-        .card-odds { font-size: 0.75rem; color: #94a3b8; }
-        .card-name { font-size: 1.1rem; margin: 5px 0; }
-        .card-desc { font-size: 0.75rem; font-family: Arial, sans-serif; color: #cbd5e1; }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            .pack-img {
+                width: 220px;
+            }
+            .card-img {
+                width: 145px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -117,6 +105,112 @@
         <button id="continue-btn" style="padding: 15px 30px; font-family: 'Pusab'; font-size: 1.5rem; background: #0284c7; color: white; border: 3px solid #7dd3fc; border-radius: 10px; cursor: pointer;">CONTINUE</button>
         <button id="again-btn" style="padding: 15px 30px; font-family: 'Pusab'; font-size: 1.5rem; background: #16a34a; color: white; border: 3px solid #86efac; border-radius: 10px; cursor: pointer;">OPEN AGAIN</button>
     </div>
+
+    <script>
+        const MAX_PACKS = 15;
+        const REGEN_TIME = 10 * 60 * 1000;
+
+        let packs = localStorage.getItem('fs_packs') !== null ? parseInt(localStorage.getItem('fs_packs')) : MAX_PACKS;
+        let lastTime = localStorage.getItem('fs_lastTime') !== null ? parseInt(localStorage.getItem('fs_lastTime')) : Date.now();
+
+        const packBtn = document.getElementById('pack-btn');
+        const packCountEl = document.getElementById('pack-count');
+        const timerTextEl = document.getElementById('timer-text');
+        const cardsAreaEl = document.getElementById('cards-area');
+        const homeScreenEl = document.getElementById('home-screen');
+        const actionButtons = document.getElementById('action-buttons');
+        const continueBtn = document.getElementById('continue-btn');
+        const againBtn = document.getElementById('again-btn');
+
+        function saveProgress() {
+            localStorage.setItem('fs_packs', packs);
+            localStorage.setItem('fs_lastTime', lastTime);
+        }
+
+        function updateGame() {
+            const now = Date.now();
+
+            if (packs < MAX_PACKS) {
+                const passed = now - lastTime;
+                const earned = Math.floor(passed / REGEN_TIME);
+
+                if (earned > 0) {
+                    packs = Math.min(MAX_PACKS, packs + earned);
+                    lastTime = packs === MAX_PACKS ? now : lastTime + (earned * REGEN_TIME);
+                    saveProgress();
+                }
+            } else {
+                lastTime = now;
+            }
+
+            packCountEl.innerText = packs;
+
+            if (packs >= MAX_PACKS) {
+                timerTextEl.innerText = "Packs are full!";
+            } else {
+                const timeLeft = REGEN_TIME - (now - lastTime);
+                const mins = Math.floor(timeLeft / 60000);
+                const secs = Math.floor((timeLeft % 60000) / 1000);
+                timerTextEl.innerText = `Next pack in: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+        }
+
+        packBtn.addEventListener('click', () => {
+            if (packs > 0) {
+                if (packs === MAX_PACKS) {
+                    lastTime = Date.now();
+                }
+                packs--;
+                saveProgress();
+                updateGame();
+
+                homeScreenEl.classList.add('hidden');
+                actionButtons.classList.add('hidden');
+                cardsAreaEl.innerHTML = "";
+
+                let createdCards = new Array();
+
+                for (let i = 0; i < 5; i++) {
+                    const imgEl = document.createElement('img');
+                    imgEl.src = "flippedcard.png";
+                    imgEl.className = "card-img";
+                    cardsAreaEl.appendChild(imgEl);
+                    createdCards.push(imgEl);
+                }
+
+                createdCards.forEach((cardImg, step) => {
+                    setTimeout(() => {
+                        cardImg.classList.add('flipping');
+
+                        setTimeout(() => {
+                            cardImg.src = "fallstreakcard.png";
+                            cardImg.classList.remove('flipping');
+                        }, 200);
+
+                        if (step === 4) {
+                            setTimeout(() => {
+                                actionButtons.classList.remove('hidden');
+                            }, 400);
+                        }
+                    }, (step + 1) * 1000);
+                });
+            }
+        });
+
+        continueBtn.addEventListener('click', () => {
+            cardsAreaEl.innerHTML = "";
+            actionButtons.classList.add('hidden');
+            homeScreenEl.classList.remove('hidden');
+        });
+
+        againBtn.addEventListener('click', () => {
+            actionButtons.classList.add('hidden');
+            packBtn.click();
+        });
+
+        setInterval(updateGame, 1000);
+        updateGame();
+    </script>
 </body>
 
             <script>
