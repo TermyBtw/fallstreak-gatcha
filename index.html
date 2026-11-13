@@ -118,7 +118,7 @@
     </div>
 </body>
 
-        <script>
+            <script>
         const MAX_PACKS = 15;
         const REGEN_TIME = 10 * 60 * 1000;
 
@@ -168,8 +168,19 @@
         }
 
         packBtn.addEventListener('click', () => {
-                            cardsAreaEl.innerHTML = "";
-                let createdCards = [];
+            if (packs > 0) {
+                if (packs === MAX_PACKS) {
+                    lastTime = Date.now();
+                }
+                packs--;
+                saveProgress();
+                updateGame();
+
+                homeScreenEl.classList.add('hidden');
+                actionButtons.classList.add('hidden');
+                cardsAreaEl.innerHTML = "";
+
+                let createdCards = new Array();
 
                 for (let i = 0; i < 5; i++) {
                     const imgEl = document.createElement('img');
@@ -182,7 +193,7 @@
                 createdCards.forEach((cardImg, step) => {
                     setTimeout(() => {
                         cardImg.classList.add('flipping');
-                        
+
                         setTimeout(() => {
                             cardImg.src = "fallstreakcard.png";
                             cardImg.classList.remove('flipping');
@@ -195,8 +206,6 @@
                         }
                     }, (step + 1) * 1000);
                 });
-
-
             }
         });
 
