@@ -85,19 +85,35 @@
         .card-odds { font-size: 0.75rem; color: #94a3b8; }
         .card-name { font-size: 1.1rem; margin: 5px 0; }
         .card-desc { font-size: 0.75rem; font-family: Arial, sans-serif; color: #cbd5e1; }
+        .hidden {
+    display: none;
+}
+
+.card.covered {
+    background-color: #0284c7;
+    border-color: #7dd3fc;
+    cursor: pointer;
+}
+
+.card.covered * {
+    visibility: hidden;
+}
 
     </style>
 </head>
 <body>
+    <div id="home-screen">
     <h1>FALLSTREAK GATCHA</h1>
 
     <img src="fallstreakpack.png" alt="Fallstreak Pack" class="pack-img" id="pack-btn">
 
     <div class="info-text">Packs: <span id="pack-count">15</span> / 15</div>
     <div class="info-text" id="timer-text">Next pack in: 10:00</div>
+    </div>
     <div class="cards-area" id="cards-area"></div>
+    <button id="continue-btn" class="hidden" style="margin-top: 30px; padding: 15px 30px; font-family: 'Pusab'; font-size: 1.5rem; background: #0284c7; color: white; border: 3px solid #7dd3fc; border-radius: 10px; cursor: pointer;">CONTINUE</button>
 </body>
-<script>
+    <script>
         const MAX_PACKS = 15;
         const REGEN_TIME = 10 * 60 * 1000;
 
@@ -108,7 +124,8 @@
         const packCountEl = document.getElementById('pack-count');
         const timerTextEl = document.getElementById('timer-text');
         const cardsAreaEl = document.getElementById('cards-area');
-
+        const homeScreenEl = document.getElementById('home-screen');
+        const continueBtn = document.getElementById('continue-btn');
 
         function saveProgress() {
             localStorage.setItem('fs_packs', packs);
@@ -151,10 +168,16 @@
                 packs--;
                 saveProgress();
                 updateGame();
+
+                homeScreenEl.classList.add('hidden');
+                continueBtn.classList.add('hidden');
+
                 cardsAreaEl.innerHTML = "";
+                let createdCards = [];
+
                 for (let i = 0; i < 5; i++) {
                     const cardDiv = document.createElement('div');
-                    cardDiv.className = "card";
+                    cardDiv.className = "card covered";
                     cardDiv.innerHTML = `
                         <div class="card-rarity">RARE</div>
                         <div class="card-odds">1 / 7</div>
@@ -163,13 +186,31 @@
                         <div class="card-desc">The creator of Fallstreak Gatcha!</div>
                     `;
                     cardsAreaEl.appendChild(cardDiv);
+                    createdCards.push(cardDiv);
                 }
 
+                let order =;
+                order.sort(() => Math.random() - 0.5);
+
+                order.forEach((cardIndex, step) => {
+                    setTimeout(() => {
+                        createdCards[cardIndex].classList.remove('covered');
+                        if (step === 4) {
+                            continueBtn.classList.remove('hidden');
+                        }
+                    }, (step + 1) * 1000);
+                });
             }
+        });
+
+        continueBtn.addEventListener('click', () => {
+            cardsAreaEl.innerHTML = "";
+            continueBtn.classList.add('hidden');
+            homeScreenEl.classList.remove('hidden');
         });
 
         setInterval(updateGame, 1000);
         updateGame();
     </script>
-
 </html>
+
