@@ -8,30 +8,53 @@
             font-family: 'Pusab';
             src: url('Pusab.otf');
         }
-        
+
         body {
-    background-color: #000926;
-    color: #ffffff;
-    font-family: 'Pusab', Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-}
+            background-color: #000926;
+            color: #ffffff;
+            font-family: 'Pusab', Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
         h1 {
-    font-size: 3.5rem;
-    margin-top: 10px;
-    background: linear-gradient(180deg, #7dd3fc, #0284c7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 2px rgba(rgba(0, 0, 0);
-}
-}
+            font-size: 3.5rem;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background: linear-gradient(180deg, #7dd3fc, #0284c7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 2px rgba(0, 0, 0, 0.5);
+        }
 
+        .pack-img {
+            width: 280px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
 
+        .pack-img:hover {
+            transform: scale(1.06);
+        }
+
+        .pack-img:active {
+            transform: scale(0.96);
+        }
+
+        .info-text {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            -webkit-text-stroke: 1px rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
 <body>
     <h1>FALLSTREAK GATCHA</h1>
 
+    <img src="fallstreak-pack.png" alt="Fallstreak Pack" class="pack-img" id="pack-btn">
+
+    <div class="info-text">Packs: <span id="pack-count">15</span> / 15</div>
+    <div class="info-text" id="timer-text">Next pack in: 10:00</div>
 </body>
 </html>
