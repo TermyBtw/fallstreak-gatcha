@@ -83,13 +83,16 @@
             visibility: hidden;
         }
 
-        .card img {
-            width: 110px;
-            height: 110px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin: 8px 0;
+               .card-img {
+            width: 190px;
+            border-radius: 12px;
+            transition: transform 0.2s ease-in-out;
         }
+
+        .card-img.flipping {
+            transform: rotateY(90deg);
+        }
+
 
         .card-rarity { font-size: 0.85rem; color: #38bdf8; }
         .card-odds { font-size: 0.75rem; color: #94a3b8; }
@@ -165,45 +168,34 @@
         }
 
         packBtn.addEventListener('click', () => {
-            if (packs > 0) {
-                if (packs === MAX_PACKS) {
-                    lastTime = Date.now();
-                }
-                packs--;
-                saveProgress();
-                updateGame();
-
-                homeScreenEl.classList.add('hidden');
-                actionButtons.classList.add('hidden');
-
-                cardsAreaEl.innerHTML = "";
+                            cardsAreaEl.innerHTML = "";
                 let createdCards = [];
 
                 for (let i = 0; i < 5; i++) {
-                    const cardDiv = document.createElement('div');
-                    cardDiv.className = "card covered";
-                    cardDiv.innerHTML = `
-                        <div class="card-rarity">RARE</div>
-                        <div class="card-odds">1 / 7</div>
-                        <img src="termypfp.png" alt="Termy">
-                        <div class="card-name">TERMY</div>
-                        <div class="card-desc">The creator of Fallstreak Gatcha!</div>
-                    `;
-                    cardsAreaEl.appendChild(cardDiv);
-                    createdCards.push(cardDiv);
+                    const imgEl = document.createElement('img');
+                    imgEl.src = "flippedcard.png";
+                    imgEl.className = "card-img";
+                    cardsAreaEl.appendChild(imgEl);
+                    createdCards.push(imgEl);
                 }
 
-                        let order = Array.of(0, 1, 2, 3, 4);
-        order.sort(() => Math.random() - 0.5);
+                createdCards.forEach((cardImg, step) => {
+                    setTimeout(() => {
+                        cardImg.classList.add('flipping');
+                        
+                        setTimeout(() => {
+                            cardImg.src = "fallstreakcard.png";
+                            cardImg.classList.remove('flipping');
+                        }, 200);
 
-        order.forEach((cardIndex, step) => {
-            setTimeout(() => {
-                createdCards[cardIndex].classList.remove('covered');
-                if (step === 4) {
-                    actionButtons.classList.remove('hidden');
-                }
-            }, (step + 1) * 1000);
-        });
+                        if (step === 4) {
+                            setTimeout(() => {
+                                actionButtons.classList.remove('hidden');
+                            }, 400);
+                        }
+                    }, (step + 1) * 1000);
+                });
+
 
             }
         });
