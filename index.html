@@ -11,7 +11,7 @@
 
         body {
             background-color: #000926;
-            color: #ffffff;
+            color: #0086C9;
             font-family: 'Pusab', Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -57,4 +57,63 @@
     <div class="info-text">Packs: <span id="pack-count">15</span> / 15</div>
     <div class="info-text" id="timer-text">Next pack in: 10:00</div>
 </body>
+<script>
+        const MAX_PACKS = 15;
+        const REGEN_TIME = 10 * 60 * 1000;
+
+        let packs = localStorage.getItem('fs_packs') !== null ? parseInt(localStorage.getItem('fs_packs')) : MAX_PACKS;
+        let lastTime = localStorage.getItem('fs_lastTime') !== null ? parseInt(localStorage.getItem('fs_lastTime')) : Date.now();
+
+        const packBtn = document.getElementById('pack-btn');
+        const packCountEl = document.getElementById('pack-count');
+        const timerTextEl = document.getElementById('timer-text');
+
+        function saveProgress() {
+            localStorage.setItem('fs_packs', packs);
+            localStorage.setItem('fs_lastTime', lastTime);
+        }
+
+        function updateGame() {
+            const now = Date.now();
+
+            if (packs < MAX_PACKS) {
+                const passed = now - lastTime;
+                const earned = Math.floor(passed / REGEN_TIME);
+
+                if (earned > 0) {
+                    packs = Math.min(MAX_PACKS, packs + earned);
+                    lastTime = packs === MAX_PACKS ? now : lastTime + (earned * REGEN_TIME);
+                    saveProgress();
+                }
+            } else {
+                lastTime = now;
+            }
+
+            packCountEl.innerText = packs;
+
+            if (packs >= MAX_PACKS) {
+                timerTextEl.innerText = "Packs are full!";
+            } else {
+                const timeLeft = REGEN_TIME - (now - lastTime);
+                const mins = Math.floor(timeLeft / 60000);
+                const secs = Math.floor((timeLeft % 60000) / 1000);
+                timerTextEl.innerText = `Next pack in: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+        }
+
+        packBtn.addEventListener('click', () => {
+            if (packs > 0) {
+                if (packs === MAX_PACKS) {
+                    lastTime = Date.now();
+                }
+                packs--;
+                saveProgress();
+                updateGame();
+            }
+        });
+
+        setInterval(updateGame, 1000);
+        updateGame();
+    </script>
+
 </html>
