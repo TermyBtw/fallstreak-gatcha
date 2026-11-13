@@ -107,6 +107,8 @@
         const packBtn = document.getElementById('pack-btn');
         const packCountEl = document.getElementById('pack-count');
         const timerTextEl = document.getElementById('timer-text');
+        const cardsAreaEl = document.getElementById('cards-area');
+
 
         function saveProgress() {
             localStorage.setItem('fs_packs', packs);
@@ -149,6 +151,20 @@
                 packs--;
                 saveProgress();
                 updateGame();
+                cardsAreaEl.innerHTML = "";
+                for (let i = 0; i < 5; i++) {
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = "card";
+                    cardDiv.innerHTML = `
+                        <div class="card-rarity">RARE</div>
+                        <div class="card-odds">1 / 7</div>
+                        <img src="termypfp.png" alt="Termy">
+                        <div class="card-name">TERMY</div>
+                        <div class="card-desc">The creator of Fallstreak Gatcha!</div>
+                    `;
+                    cardsAreaEl.appendChild(cardDiv);
+                }
+
             }
         });
 
