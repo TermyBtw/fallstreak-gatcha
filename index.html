@@ -103,17 +103,23 @@
 </head>
 <body>
     <div id="home-screen">
-    <h1>FALLSTREAK GATCHA</h1>
+        <h1>FALLSTREAK GATCHA</h1>
 
-    <img src="fallstreakpack.png" alt="Fallstreak Pack" class="pack-img" id="pack-btn">
+        <img src="fallstreakpack.png" alt="Fallstreak Pack" class="pack-img" id="pack-btn">
 
-    <div class="info-text">Packs: <span id="pack-count">15</span> / 15</div>
-    <div class="info-text" id="timer-text">Next pack in: 10:00</div>
+        <div class="info-text">Packs: <span id="pack-count">15</span> / 15</div>
+        <div class="info-text" id="timer-text">Next pack in: 10:00</div>
     </div>
+
     <div class="cards-area" id="cards-area"></div>
-    <button id="continue-btn" class="hidden" style="margin-top: 30px; padding: 15px 30px; font-family: 'Pusab'; font-size: 1.5rem; background: #0284c7; color: white; border: 3px solid #7dd3fc; border-radius: 10px; cursor: pointer;">CONTINUE</button>
+
+    <div id="action-buttons" class="hidden" style="margin-top: 30px; display: flex; justify-content: center; gap: 20px;">
+        <button id="continue-btn" style="padding: 15px 30px; font-family: 'Pusab'; font-size: 1.5rem; background: #0284c7; color: white; border: 3px solid #7dd3fc; border-radius: 10px; cursor: pointer;">CONTINUE</button>
+        <button id="again-btn" style="padding: 15px 30px; font-family: 'Pusab'; font-size: 1.5rem; background: #16a34a; color: white; border: 3px solid #86efac; border-radius: 10px; cursor: pointer;">OPEN AGAIN</button>
+    </div>
 </body>
-    <script>
+
+        <script>
         const MAX_PACKS = 15;
         const REGEN_TIME = 10 * 60 * 1000;
 
@@ -125,7 +131,9 @@
         const timerTextEl = document.getElementById('timer-text');
         const cardsAreaEl = document.getElementById('cards-area');
         const homeScreenEl = document.getElementById('home-screen');
+        const actionButtons = document.getElementById('action-buttons');
         const continueBtn = document.getElementById('continue-btn');
+        const againBtn = document.getElementById('again-btn');
 
         function saveProgress() {
             localStorage.setItem('fs_packs', packs);
@@ -170,7 +178,7 @@
                 updateGame();
 
                 homeScreenEl.classList.add('hidden');
-                continueBtn.classList.add('hidden');
+                actionButtons.classList.add('hidden');
 
                 cardsAreaEl.innerHTML = "";
                 let createdCards = [];
@@ -189,28 +197,35 @@
                     createdCards.push(cardDiv);
                 }
 
-                let order =;
-                order.sort(() => Math.random() - 0.5);
+                        let order = Array.of(0, 1, 2, 3, 4);
+        order.sort(() => Math.random() - 0.5);
 
-                order.forEach((cardIndex, step) => {
-                    setTimeout(() => {
-                        createdCards[cardIndex].classList.remove('covered');
-                        if (step === 4) {
-                            continueBtn.classList.remove('hidden');
-                        }
-                    }, (step + 1) * 1000);
-                });
+        order.forEach((cardIndex, step) => {
+            setTimeout(() => {
+                createdCards[cardIndex].classList.remove('covered');
+                if (step === 4) {
+                    actionButtons.classList.remove('hidden');
+                }
+            }, (step + 1) * 1000);
+        });
+
             }
         });
 
         continueBtn.addEventListener('click', () => {
             cardsAreaEl.innerHTML = "";
-            continueBtn.classList.add('hidden');
+            actionButtons.classList.add('hidden');
             homeScreenEl.classList.remove('hidden');
+        });
+
+        againBtn.addEventListener('click', () => {
+            actionButtons.classList.add('hidden');
+            packBtn.click();
         });
 
         setInterval(updateGame, 1000);
         updateGame();
     </script>
+
 </html>
 
